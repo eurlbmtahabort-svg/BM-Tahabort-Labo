@@ -8,4 +8,4 @@ directory = "./dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "lt-lims-db"
-database_id = "YOUR_DATABASE_ID"
+database_id = "8cd3e712-5b4f-4d76-b569-c9e8ba0c64ed"
