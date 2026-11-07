@@ -18,14 +18,14 @@ export const BaseLayerModule: React.FC = () => {
 
   const isConforme = cbr95Pct >= 30.0 && losAngelesPct <= 30.0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const sample = samples.find(s => s.id === selectedSampleId);
     if (!sample) return;
 
     const result: ComplianceResult = isConforme ? 'Conforme' : 'Non Conforme';
 
-    addBaseLayerTest({
+    await addBaseLayerTest({
       sampleId: sample.id,
       sampleCode: sample.code,
       clientName: sample.clientName,
@@ -42,7 +42,7 @@ export const BaseLayerModule: React.FC = () => {
       notes
     });
 
-    generatePV(
+    await generatePV(
       sample.id,
       `Essais Couche de Base (GNT). Proctor Modifié OMD = ${maxDryDensity} t/m³, Wopt = ${optimumMoisturePct}%, CBR @ 95% = ${cbr95Pct}%, Los Angeles = ${losAngelesPct}%. Résultat: ${result}.`,
       result

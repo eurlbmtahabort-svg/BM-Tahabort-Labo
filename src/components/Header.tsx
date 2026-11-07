@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { FlaskConical, Globe, Bell, ShieldCheck, Search } from 'lucide-react';
+import { FlaskConical, Globe, Bell, ShieldCheck, Search, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Header: React.FC = () => {
   const [lang, setLang] = useState<'fr' | 'ar'>('fr');
+  const { user, logout } = useAuth();
 
   return (
     <header className="h-16 bg-[#2D2D2D] text-white px-6 flex items-center justify-between border-b border-neutral-700 shrink-0 sticky top-0 z-30 shadow-md">
@@ -16,7 +18,7 @@ export const Header: React.FC = () => {
             LABO TAHABORT <span className="text-[#FF8C00] font-normal text-xs ml-2 px-2 py-0.5 bg-neutral-800 rounded">LT-LIMS v0.1</span>
           </h1>
           <p className="text-xs text-neutral-400 font-arabic">
-            {lang === 'fr' ? 'Laboratoire de Contrôle Qualité & Géotechnique' : 'مخابق تحابورت لمراقبة الجودة وهندسة المدنیة'}
+            {lang === 'fr' ? 'Laboratoire de Contrôle Qualité & Géotechnique' : 'مخابر تحابورت لمراقبة الجودة والجيوتقنية'}
           </p>
         </div>
       </div>
@@ -57,15 +59,22 @@ export const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Lab Director Profile */}
+        {/* Lab Director Profile & Logout */}
         <div className="flex items-center gap-3 pl-2 border-l border-neutral-700">
           <div className="w-8 h-8 rounded-full bg-neutral-700 border border-[#FF8C00] flex items-center justify-center text-xs font-bold text-[#FF8C00]">
-            MT
+            {user ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'MT'}
           </div>
           <div className="hidden xl:block text-left">
-            <p className="text-xs font-semibold leading-tight">Dr. M. Tahabort</p>
-            <p className="text-[10px] text-neutral-400">Directeur Labo</p>
+            <p className="text-xs font-semibold leading-tight">{user?.name || 'Dr. M. Tahabort'}</p>
+            <p className="text-[10px] text-neutral-400">{user?.role || 'Directeur Labo'}</p>
           </div>
+          <button
+            onClick={logout}
+            className="p-1.5 bg-neutral-800 hover:bg-rose-950 text-neutral-300 hover:text-rose-300 rounded transition-colors ml-2"
+            title="Se déconnecter"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>

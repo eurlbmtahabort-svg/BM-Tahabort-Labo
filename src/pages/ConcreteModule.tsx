@@ -23,14 +23,14 @@ export const ConcreteModule: React.FC = () => {
   const calculatedRc = Number(((crushingForceKN * 1000) / (sectionalAreaCm2 * 100)).toFixed(2));
   const isConforme = calculatedRc >= 25.0; // Assume C25/30 threshold fck >= 25 MPa
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const sample = samples.find(s => s.id === selectedSampleId);
     if (!sample) return;
 
     const result: ComplianceResult = isConforme ? 'Conforme' : 'Non Conforme';
 
-    const newTest = addConcreteTest({
+    const newTest = await addConcreteTest({
       sampleId: sample.id,
       sampleCode: sample.code,
       clientName: sample.clientName,
@@ -50,7 +50,7 @@ export const ConcreteModule: React.FC = () => {
     });
 
     // Also offer to generate PV
-    generatePV(
+    await generatePV(
       sample.id,
       `Écrasement éprouvette béton à ${ageDays} jours. Force de rupture = ${crushingForceKN} kN, Surface = ${sectionalAreaCm2} cm², Résistance Rc = ${newTest.calculatedRcMPa} MPa. Résultat: ${result}.`,
       result

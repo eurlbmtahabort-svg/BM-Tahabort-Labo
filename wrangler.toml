@@ -1,0 +1,11 @@
+name = "bm-tahabort-labo"
+main = "src/worker.ts"
+compatibility_date = "2026-01-01"
+
+[assets]
+directory = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lt-lims-db"
+database_id = "YOUR_DATABASE_ID"

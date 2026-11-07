@@ -5,8 +5,10 @@
 
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { LimsProvider } from './context/LimsContext';
 import { Layout } from './components/Layout';
+import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { SamplesModule } from './pages/SamplesModule';
 import { ConcreteModule } from './pages/ConcreteModule';
@@ -16,7 +18,13 @@ import { ClientsModule } from './pages/ClientsModule';
 import { ReportsModule } from './pages/ReportsModule';
 import { StandardsModule } from './pages/StandardsModule';
 
-export default function App() {
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
+
   return (
     <LimsProvider>
       <BrowserRouter>
@@ -37,3 +45,10 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  );
+}

@@ -18,9 +18,9 @@ export const SamplesModule: React.FC = () => {
   const [samplingLocation, setSamplingLocation] = useState('Zone Est');
   const [technician, setTechnician] = useState('Rachid M.');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addSample({
+    await addSample({
       code,
       clientName,
       projectName,

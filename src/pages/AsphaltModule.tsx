@@ -18,14 +18,14 @@ export const AsphaltModule: React.FC = () => {
 
   const isConforme = stabilityKN >= 7.5 && voidsPct >= 3.0 && voidsPct <= 5.0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const sample = samples.find(s => s.id === selectedSampleId);
     if (!sample) return;
 
     const result: ComplianceResult = isConforme ? 'Conforme' : 'Non Conforme';
 
-    addAsphaltTest({
+    await addAsphaltTest({
       sampleId: sample.id,
       sampleCode: sample.code,
       clientName: sample.clientName,
@@ -42,7 +42,7 @@ export const AsphaltModule: React.FC = () => {
       notes
     });
 
-    generatePV(
+    await generatePV(
       sample.id,
       `Essai Marshall enrobé bitumineux. Stabilité = ${stabilityKN} kN, Fluage = ${flow01mm} (0.1mm), Teneur en liant = ${binderContentPct}%, Vides = ${voidsPct}%. Résultat: ${result}.`,
       result
