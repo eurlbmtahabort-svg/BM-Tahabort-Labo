@@ -92,7 +92,7 @@ export const ConcreteModule: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full min-w-[750px] text-left text-xs">
             <thead className="bg-neutral-900 text-neutral-400 uppercase font-mono tracking-wider border-b border-neutral-700">
               <tr>
                 <th className="px-6 py-3">Code Échantillon</th>

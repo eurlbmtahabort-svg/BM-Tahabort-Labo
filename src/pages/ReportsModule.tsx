@@ -20,11 +20,11 @@ export const ReportsModule: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12 px-2 sm:px-0">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <FileText className="w-6 h-6 text-[#FF8C00]" />
             <span>Procès-Verbaux (PV) Officiels</span>
           </h2>
@@ -60,7 +60,7 @@ export const ReportsModule: React.FC = () => {
             </div>
           </div>
 
-          <div className="divide-y divide-neutral-700/60 max-h-[600px] overflow-y-auto">
+          <div className="divide-y divide-neutral-700/60 max-h-[500px] overflow-y-auto">
             {filteredReports.map((r) => (
               <div
                 key={r.id}
@@ -86,7 +86,7 @@ export const ReportsModule: React.FC = () => {
               </div>
             ))}
             {filteredReports.length === 0 && (
-              <div className="p-8 text-center text-neutral-500 text-xs">
+              <div className="p-6 text-center text-neutral-400 text-xs">
                 Aucun PV trouvé.
               </div>
             )}
@@ -94,22 +94,22 @@ export const ReportsModule: React.FC = () => {
         </div>
 
         {/* PV Official Preview Document */}
-        <div className="lg:col-span-7 bg-white text-neutral-900 rounded-xl p-8 shadow-2xl border border-neutral-300 relative print:shadow-none print:w-full print:p-0">
+        <div className="lg:col-span-7 bg-white text-neutral-900 rounded-xl p-6 md:p-8 shadow-2xl border border-neutral-300 relative print:shadow-none print:w-full print:p-0">
           {selectedReport ? (
             <div className="space-y-6">
               {/* PV Header */}
-              <div className="border-b-2 border-neutral-900 pb-4 flex items-start justify-between">
+              <div className="border-b-2 border-neutral-900 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#2D2D2D] text-[#FF8C00] font-bold text-xl rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-[#2D2D2D] text-[#FF8C00] font-bold text-xl rounded-lg flex items-center justify-center shrink-0">
                     LT
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm tracking-tight text-neutral-900">LABO TAHABORT (EURL BM. TAHABORT)</h3>
-                    <p className="text-[11px] text-neutral-600">Laboratoire de Contrôle Qualité, Géotechnique & BTP</p>
-                    <p className="text-[10px] text-neutral-500 font-mono">Agrément ALGERAC N° G-042 · Béjaïa, Algérie</p>
+                    <h3 className="font-bold text-xs sm:text-sm tracking-tight text-neutral-900">LABO TAHABORT (EURL BM. TAHABORT)</h3>
+                    <p className="text-[10px] sm:text-[11px] text-neutral-600">Laboratoire de Contrôle Qualité & Géotechnique</p>
+                    <p className="text-[9px] sm:text-[10px] text-neutral-500 font-mono">Agrément ALGERAC N° G-042 · Béjaïa</p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right w-full sm:w-auto">
                   <span className="inline-block px-3 py-1 bg-neutral-900 text-white font-mono font-bold text-xs rounded">
                     {selectedReport.pvNumber}
                   </span>
@@ -122,18 +122,18 @@ export const ReportsModule: React.FC = () => {
                 <h4 className="text-xs font-bold uppercase tracking-wide text-neutral-900">
                   PROCÈS-VERBAL D'ESSAI EN LABORATOIRE
                 </h4>
-                <p className="text-[11px] text-neutral-600">Référence Normative: {selectedReport.standardRef}</p>
+                <p className="text-[10px] sm:text-[11px] text-neutral-600">Référence Normative: {selectedReport.standardRef}</p>
               </div>
 
               {/* Client & Project Info */}
-              <div className="grid grid-cols-2 gap-4 text-xs bg-neutral-50 p-4 rounded border border-neutral-200 font-mono">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-neutral-50 p-3 sm:p-4 rounded border border-neutral-200 font-mono">
                 <div>
                   <span className="text-neutral-500 block text-[10px] uppercase">Maître d'Ouvrage / Client:</span>
-                  <span className="font-bold text-neutral-900 font-sans text-sm">{selectedReport.clientName}</span>
+                  <span className="font-bold text-neutral-900 font-sans text-xs sm:text-sm">{selectedReport.clientName}</span>
                 </div>
                 <div>
                   <span className="text-neutral-500 block text-[10px] uppercase">Chantier / Projet:</span>
-                  <span className="font-bold text-neutral-900 font-sans text-sm">{selectedReport.projectName}</span>
+                  <span className="font-bold text-neutral-900 font-sans text-xs sm:text-sm">{selectedReport.projectName}</span>
                 </div>
                 <div>
                   <span className="text-neutral-500 block text-[10px] uppercase">Code Échantillon:</span>
@@ -148,21 +148,21 @@ export const ReportsModule: React.FC = () => {
               {/* Test Results Summary */}
               <div className="space-y-2">
                 <h5 className="text-xs font-bold text-neutral-800 uppercase tracking-wider">Résultats & Analyse Technique</h5>
-                <div className="p-4 bg-neutral-100 border border-neutral-300 rounded text-xs text-neutral-800 leading-relaxed font-mono">
+                <div className="p-3 sm:p-4 bg-neutral-100 border border-neutral-300 rounded text-xs text-neutral-800 leading-relaxed font-mono">
                   {selectedReport.summaryText}
                 </div>
               </div>
 
               {/* Compliance Conclusion Box */}
-              <div className="p-4 rounded border-2 flex items-center justify-between bg-neutral-50 border-neutral-300">
+              <div className="p-3 sm:p-4 rounded border-2 flex items-center justify-between bg-neutral-50 border-neutral-300">
                 <div className="flex items-center gap-3">
-                  <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                  <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
                   <div>
                     <p className="text-xs font-bold text-neutral-900 uppercase">Conclusion de Conformité</p>
-                    <p className="text-[11px] text-neutral-600">Conforme aux exigences des cahiers des charges et normes NA/EN.</p>
+                    <p className="text-[10px] sm:text-[11px] text-neutral-600">Conforme aux exigences des cahiers des charges NA/EN.</p>
                   </div>
                 </div>
-                <span className={`px-4 py-1.5 rounded font-bold text-xs uppercase tracking-wider ${
+                <span className={`px-3 py-1 rounded font-bold text-[11px] sm:text-xs uppercase tracking-wider ${
                   selectedReport.testResult === 'Conforme' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
                 }`}>
                   {selectedReport.testResult}
@@ -170,32 +170,32 @@ export const ReportsModule: React.FC = () => {
               </div>
 
               {/* Signatures & QR Code */}
-              <div className="pt-6 border-t border-neutral-200 flex items-end justify-between text-xs">
+              <div className="pt-4 border-t border-neutral-200 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 text-xs">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-neutral-600 font-mono text-[10px]">
-                    <QrCode className="w-8 h-8 text-neutral-800" />
+                    <QrCode className="w-7 h-7 text-neutral-800 shrink-0" />
                     <div>
                       <p className="font-bold text-neutral-900">Token Vérification:</p>
-                      <p className="text-neutral-500">{selectedReport.qrCodeToken}</p>
+                      <p className="text-neutral-500 truncate max-w-[180px] sm:max-w-none">{selectedReport.qrCodeToken}</p>
                     </div>
                   </div>
-                  <p className="text-[10px] text-neutral-400 mt-2">Document non reproductible sans autorisation écrite.</p>
+                  <p className="text-[9px] text-neutral-400">Document non reproductible sans autorisation.</p>
                 </div>
 
-                <div className="text-right space-y-2">
+                <div className="text-left sm:text-right space-y-1 w-full sm:w-auto">
                   <p className="font-bold text-neutral-900">Le Directeur du Laboratoire</p>
-                  <div className="h-12 flex items-center justify-end">
-                    <span className="font-serif italic text-sm text-neutral-700 font-bold border-b border-dashed border-neutral-400 pb-1">
+                  <div className="h-10 flex items-center sm:justify-end">
+                    <span className="font-serif italic text-xs sm:text-sm text-neutral-700 font-bold border-b border-dashed border-neutral-400 pb-0.5">
                       Dr. M. Tahabort
                     </span>
                   </div>
-                  <p className="text-[10px] text-neutral-500">Cachet & Signature</p>
+                  <p className="text-[9px] text-neutral-500">Cachet & Signature</p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="py-20 text-center text-neutral-400">
-              Sélectionnez un PV dans la liste pour l'afficher.
+            <div className="py-12 px-6 text-center text-neutral-500 text-xs bg-neutral-50 rounded-lg border border-dashed border-neutral-300">
+              Veuillez sélectionner un procès-verbal dans la liste ci-contre pour afficher son aperçu officiel.
             </div>
           )}
         </div>
