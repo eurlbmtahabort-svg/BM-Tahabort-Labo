@@ -1,0 +1,6 @@
+{
+  "name": "Labo Tahabort - LT-LIMS",
+  "description": "Civil engineering laboratory quality control management system for concrete, asphalt, and road base tests compliant with Algerian standards (NA) and European norms (EN).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
