@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FlaskConical, Lock, User, ShieldCheck, Building2 } from 'lucide-react';
+import { Lock, User, ShieldCheck, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
+  const { t, i18n } = useTranslation();
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('labo2026');
   const [error, setError] = useState(false);
@@ -16,8 +18,31 @@ export const Login: React.FC = () => {
     }
   };
 
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
+  };
+
+  const currentLang = i18n.language || 'fr';
+
   return (
-    <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-4 relative">
+      {/* Language Switcher top right on login */}
+      <div className="absolute top-6 end-6 flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-lg p-1 text-xs">
+        <Globe className="w-4 h-4 text-[#FF8000] ms-2" />
+        {(['fr', 'ar', 'en'] as const).map((lng) => (
+          <button
+            key={lng}
+            onClick={() => changeLanguage(lng)}
+            className={`px-2.5 py-1 rounded font-mono uppercase transition-colors ${
+              currentLang === lng ? 'bg-[#FF8000] text-white font-bold' : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            {lng}
+          </button>
+        ))}
+      </div>
+
       {/* Background ambient lighting */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-950 to-black z-0 pointer-events-none"></div>
 
@@ -28,14 +53,14 @@ export const Login: React.FC = () => {
             LT
           </div>
           <h1 className="text-xl font-bold tracking-tight text-white">
-            LABO TAHABORT
+            {t('login.title')}
           </h1>
           <p className="text-xs text-neutral-400 font-arabic">
-            مخابر تحابورت لمراقبة الجودة والجيوتقنية
+            {t('login.subtitle')}
           </p>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-800 text-[#FF8000] rounded-full text-xs font-mono">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>LT-LIMS v0.1 • Cloudflare D1 Auth</span>
+            <span>{t('login.badge')}</span>
           </div>
         </div>
 
@@ -43,35 +68,35 @@ export const Login: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {error && (
             <div className="p-3 bg-rose-950/80 border border-rose-800 text-rose-300 rounded-lg text-center font-medium">
-              Identifiants incorrects. Utilisez admin / labo2026.
+              {t('login.error')}
             </div>
           )}
 
           <div>
-            <label className="block text-neutral-400 mb-1">Nom d'utilisateur / Matricule</label>
+            <label className="block text-neutral-400 mb-1">{t('login.usernameLabel')}</label>
             <div className="relative">
-              <User className="absolute left-3 top-2.5 w-4 h-4 text-neutral-500" />
+              <User className="absolute start-3 top-2.5 w-4 h-4 text-neutral-500" />
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg pl-9 pr-3 py-2.5 text-white focus:outline-none focus:border-[#FF8000]"
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg ps-9 pe-3 py-2.5 text-white focus:outline-none focus:border-[#FF8000]"
                 placeholder="admin"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-neutral-400 mb-1">Mot de passe</label>
+            <label className="block text-neutral-400 mb-1">{t('login.passwordLabel')}</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-2.5 w-4 h-4 text-neutral-500" />
+              <Lock className="absolute start-3 top-2.5 w-4 h-4 text-neutral-500" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg pl-9 pr-3 py-2.5 text-white focus:outline-none focus:border-[#FF8000]"
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg ps-9 pe-3 py-2.5 text-white focus:outline-none focus:border-[#FF8000]"
                 placeholder="••••••••"
               />
             </div>
@@ -81,22 +106,22 @@ export const Login: React.FC = () => {
             type="submit"
             className="w-full py-3 bg-[#FF8000] hover:bg-[#e07b00] text-white rounded-lg font-semibold shadow transition-colors text-sm"
           >
-            Se Connecter au LIMS
+            {t('login.submit')}
           </button>
         </form>
 
         {/* Test Credentials Hint Box */}
         <div className="p-3 bg-neutral-950 rounded-lg border border-neutral-800 text-neutral-400 text-[11px] space-y-1">
-          <p className="font-semibold text-neutral-300">Identifiants de test démo:</p>
+          <p className="font-semibold text-neutral-300">{t('login.demoHint')}</p>
           <div className="flex justify-between font-mono">
-            <span>Utilisateur: <strong className="text-white">admin</strong></span>
-            <span>Mot de passe: <strong className="text-[#FF8000]">labo2026</strong></span>
+            <span>{t('login.userHint')} <strong className="text-white">admin</strong></span>
+            <span>{t('login.passHint')} <strong className="text-[#FF8000]">labo2026</strong></span>
           </div>
         </div>
 
         {/* Footer info */}
         <div className="text-center text-[10px] text-neutral-500">
-          Document non reproductible sans autorisation • Normes NA & EN
+          {t('login.copyright')}
         </div>
       </div>
     </div>

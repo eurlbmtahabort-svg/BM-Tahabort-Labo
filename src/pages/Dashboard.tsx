@@ -10,13 +10,14 @@ import {
   Box, 
   Layers, 
   Mountain,
-  CheckCircle2,
-  AlertTriangle
+  CheckCircle2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const Dashboard: React.FC = () => {
   const { stats, samples, concreteTests, asphaltTests, baseLayerTests, reports } = useLims();
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -25,13 +26,13 @@ export const Dashboard: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 text-[#FF8000] text-xs font-semibold uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#FF8000] animate-pulse"></span>
-            Laboratoire de Contrôle Qualité — Plateforme LT-LIMS v0.1
+            {t('dashboard.heroBanner')}
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white">
-            Tableau de Bord Laboratoire
+            {t('dashboard.title')}
           </h2>
           <p className="text-xs text-neutral-400 mt-1">
-            Suivi en temps réel des essais géotechniques, bétons et enrobés bitumineux conformes aux normes NA & EN.
+            {t('dashboard.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -40,14 +41,14 @@ export const Dashboard: React.FC = () => {
             className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg text-xs font-semibold shadow transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            <span>Nouvel Échantillon</span>
+            <span>{t('dashboard.newSample')}</span>
           </Link>
           <Link 
             to="/reports"
             className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-2"
           >
             <FileCheck className="w-4 h-4" />
-            <span>Émettre un PV</span>
+            <span>{t('dashboard.issueReport')}</span>
           </Link>
         </div>
       </div>
@@ -57,7 +58,7 @@ export const Dashboard: React.FC = () => {
         {/* Metric 1 */}
         <div className="bg-neutral-800/80 border border-neutral-700/80 p-5 rounded-xl">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-neutral-400">Échantillons Reçus</span>
+            <span className="text-xs font-medium text-neutral-400">{t('dashboard.samplesReceived')}</span>
             <div className="w-9 h-9 rounded-lg bg-blue-950/80 text-blue-400 flex items-center justify-center">
               <TestTube2 className="w-5 h-5" />
             </div>
@@ -71,7 +72,7 @@ export const Dashboard: React.FC = () => {
         {/* Metric 2 */}
         <div className="bg-neutral-800/80 border border-neutral-700/80 p-5 rounded-xl">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-neutral-400">Essais en Attente</span>
+            <span className="text-xs font-medium text-neutral-400">{t('dashboard.pendingTests')}</span>
             <div className="w-9 h-9 rounded-lg bg-amber-950/80 text-amber-400 flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
@@ -85,7 +86,7 @@ export const Dashboard: React.FC = () => {
         {/* Metric 3 */}
         <div className="bg-neutral-800/80 border border-neutral-700/80 p-5 rounded-xl">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-neutral-400">PV Officiels Émis</span>
+            <span className="text-xs font-medium text-neutral-400">{t('dashboard.pvsIssued')}</span>
             <div className="w-9 h-9 rounded-lg bg-emerald-950/80 text-emerald-400 flex items-center justify-center">
               <FileCheck className="w-5 h-5" />
             </div>
@@ -99,7 +100,7 @@ export const Dashboard: React.FC = () => {
         {/* Metric 4 */}
         <div className="bg-neutral-800/80 border border-neutral-700/80 p-5 rounded-xl">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-neutral-400">Taux de Conformité</span>
+            <span className="text-xs font-medium text-neutral-400">{t('dashboard.complianceRate')}</span>
             <div className="w-9 h-9 rounded-lg bg-purple-950/80 text-purple-400 flex items-center justify-center">
               <TrendingUp className="w-5 h-5" />
             </div>
@@ -121,15 +122,15 @@ export const Dashboard: React.FC = () => {
                 <div className="w-8 h-8 rounded bg-blue-900/40 text-blue-400 flex items-center justify-center">
                   <Box className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Béton & Éprouvettes</h3>
+                <h3 className="text-sm font-bold text-white">{t('dashboard.concreteTitle')}</h3>
               </div>
               <span className="text-xs font-mono text-neutral-400">NA 16002</span>
             </div>
             <p className="text-xs text-neutral-400 mb-4">
-              Compression uniaxiale, affaissement cône Abrams, cure thermique.
+              {t('dashboard.concreteDesc')}
             </p>
             <div className="flex items-center justify-between text-xs py-2 border-t border-neutral-700/60">
-              <span className="text-neutral-400">Essais enregistrés:</span>
+              <span className="text-neutral-400">{t('dashboard.testsCount')}</span>
               <span className="font-mono font-bold text-white">{concreteTests.length}</span>
             </div>
           </div>
@@ -137,8 +138,8 @@ export const Dashboard: React.FC = () => {
             to="/concrete"
             className="mt-4 w-full py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2"
           >
-            <span>Gérer le Béton</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>{t('dashboard.manageConcrete')}</span>
+            <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
           </Link>
         </div>
 
@@ -150,15 +151,15 @@ export const Dashboard: React.FC = () => {
                 <div className="w-8 h-8 rounded bg-amber-900/40 text-amber-400 flex items-center justify-center">
                   <Layers className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Enrobés Bitumineux</h3>
+                <h3 className="text-sm font-bold text-white">{t('dashboard.asphaltTitle')}</h3>
               </div>
               <span className="text-xs font-mono text-neutral-400">NA 5031</span>
             </div>
             <p className="text-xs text-neutral-400 mb-4">
-              Essai Marshall (stabilité, fluage), teneur en liant, vides.
+              {t('dashboard.asphaltDesc')}
             </p>
             <div className="flex items-center justify-between text-xs py-2 border-t border-neutral-700/60">
-              <span className="text-neutral-400">Essais enregistrés:</span>
+              <span className="text-neutral-400">{t('dashboard.testsCount')}</span>
               <span className="font-mono font-bold text-white">{asphaltTests.length}</span>
             </div>
           </div>
@@ -166,8 +167,8 @@ export const Dashboard: React.FC = () => {
             to="/asphalt"
             className="mt-4 w-full py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2"
           >
-            <span>Gérer les Enrobés</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>{t('dashboard.manageAsphalt')}</span>
+            <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
           </Link>
         </div>
 
@@ -179,15 +180,15 @@ export const Dashboard: React.FC = () => {
                 <div className="w-8 h-8 rounded bg-emerald-900/40 text-emerald-400 flex items-center justify-center">
                   <Mountain className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Couches de Base (GNT)</h3>
+                <h3 className="text-sm font-bold text-white">{t('dashboard.baseLayerTitle')}</h3>
               </div>
               <span className="text-xs font-mono text-neutral-400">NA 523</span>
             </div>
             <p className="text-xs text-neutral-400 mb-4">
-              Proctor Modifié, CBR, équivalent de sable, Los Angeles.
+              {t('dashboard.baseLayerDesc')}
             </p>
             <div className="flex items-center justify-between text-xs py-2 border-t border-neutral-700/60">
-              <span className="text-neutral-400">Essais enregistrés:</span>
+              <span className="text-neutral-400">{t('dashboard.testsCount')}</span>
               <span className="font-mono font-bold text-white">{baseLayerTests.length}</span>
             </div>
           </div>
@@ -195,8 +196,8 @@ export const Dashboard: React.FC = () => {
             to="/base-layer"
             className="mt-4 w-full py-2 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2"
           >
-            <span>Gérer Couches de Base</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>{t('dashboard.manageBaseLayer')}</span>
+            <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
           </Link>
         </div>
       </div>
@@ -206,23 +207,23 @@ export const Dashboard: React.FC = () => {
         <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TestTube2 className="w-4 h-4 text-[#FF8C00]" />
-            <h3 className="text-sm font-bold text-white">Derniers Échantillons Reçus</h3>
+            <h3 className="text-sm font-bold text-white">{t('dashboard.recentSamples')}</h3>
           </div>
           <Link to="/samples" className="text-xs text-[#FF8C00] hover:underline font-medium">
-            Voir tout ({samples.length})
+            {t('dashboard.viewAll')} ({samples.length})
           </Link>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px] text-left text-xs">
+          <table className="w-full min-w-[700px] text-start text-xs">
             <thead className="bg-neutral-900/60 text-neutral-400 uppercase font-mono tracking-wider border-b border-neutral-700">
               <tr>
-                <th className="px-6 py-3">Code Échantillon</th>
-                <th className="px-6 py-3">Client</th>
-                <th className="px-6 py-3">Chantier / Projet</th>
-                <th className="px-6 py-3">Matériau</th>
-                <th className="px-6 py-3">Date Réception</th>
-                <th className="px-6 py-3">Statut</th>
+                <th className="px-6 py-3 text-start">{t('dashboard.tableCode')}</th>
+                <th className="px-6 py-3 text-start">{t('dashboard.tableClient')}</th>
+                <th className="px-6 py-3 text-start">{t('dashboard.tableProject')}</th>
+                <th className="px-6 py-3 text-start">{t('dashboard.tableMaterial')}</th>
+                <th className="px-6 py-3 text-start">{t('dashboard.tableDate')}</th>
+                <th className="px-6 py-3 text-start">{t('dashboard.tableStatus')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-700/60 text-neutral-300 font-mono">
@@ -237,7 +238,7 @@ export const Dashboard: React.FC = () => {
                       s.materialType === 'asphalt' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
                       'bg-emerald-950 text-emerald-300 border border-emerald-800'
                     }`}>
-                      {s.materialType === 'concrete' ? 'Béton' : s.materialType === 'asphalt' ? 'Enrobé' : 'Grave GNT'}
+                      {s.materialType === 'concrete' ? t('dashboard.matConcrete') : s.materialType === 'asphalt' ? t('dashboard.matAsphalt') : t('dashboard.matBase')}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-neutral-400">{s.dateReceived}</td>
@@ -248,7 +249,7 @@ export const Dashboard: React.FC = () => {
                       'bg-amber-950 text-amber-400 border border-amber-800'
                     }`}>
                       {s.status === 'validated' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                      <span className="capitalize">{s.status === 'validated' ? 'Validé (PV)' : s.status === 'tested' ? 'Testé' : 'En Attente'}</span>
+                      <span className="capitalize">{s.status === 'validated' ? t('dashboard.validated') : s.status === 'tested' ? t('dashboard.tested') : t('dashboard.pending')}</span>
                     </span>
                   </td>
                 </tr>

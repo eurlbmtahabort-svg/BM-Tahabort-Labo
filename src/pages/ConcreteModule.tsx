@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useLims } from '../context/LimsContext';
-import { Box, Plus, CheckCircle2, AlertTriangle, FileText, Trash2, Calculator } from 'lucide-react';
+import { Box, Plus, CheckCircle2, AlertTriangle, Calculator } from 'lucide-react';
 import { ComplianceResult } from '../types/lims';
+import { useTranslation } from 'react-i18next';
 
 export const ConcreteModule: React.FC = () => {
   const { concreteTests, addConcreteTest, samples, generatePV } = useLims();
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
 
   // Form state
@@ -15,13 +17,13 @@ export const ConcreteModule: React.FC = () => {
   const [dimensionB, setDimensionB] = useState<number>(150);
   const [weightKg, setWeightKg] = useState<number>(8.200);
   const [crushingForceKN, setCrushingForceKN] = useState<number>(680);
-  const [sectionalAreaCm2, setSectionalAreaCm2] = useState<number>(225); // 15x15 cm = 225 cm²
+  const [sectionalAreaCm2, setSectionalAreaCm2] = useState<number>(225);
   const [slumpMm, setSlumpMm] = useState<number>(80);
   const [notes, setNotes] = useState<string>('Éprouvettes cylindriques 16x32 ou cubiques 15x15. Conforme NA 16002.');
 
   // Auto-calculated preview
   const calculatedRc = Number(((crushingForceKN * 1000) / (sectionalAreaCm2 * 100)).toFixed(2));
-  const isConforme = calculatedRc >= 25.0; // Assume C25/30 threshold fck >= 25 MPa
+  const isConforme = calculatedRc >= 25.0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +51,6 @@ export const ConcreteModule: React.FC = () => {
       notes
     });
 
-    // Also offer to generate PV
     await generatePV(
       sample.id,
       `Écrasement éprouvette béton à ${ageDays} jours. Force de rupture = ${crushingForceKN} kN, Surface = ${sectionalAreaCm2} cm², Résistance Rc = ${newTest.calculatedRcMPa} MPa. Résultat: ${result}.`,
@@ -69,10 +70,10 @@ export const ConcreteModule: React.FC = () => {
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <Box className="w-6 h-6 text-[#FF8C00]" />
-            <span>Contrôle Qualité Béton & Écrasement</span>
+            <span>{t('concrete.title')}</span>
           </h2>
           <p className="text-xs text-neutral-400 mt-1">
-            Essais de résistance à la compression sur éprouvettes de béton durci et mesure d'ouvrabilité au cône d'Abrams.
+            {t('concrete.subtitle')}
           </p>
         </div>
         <button
@@ -80,7 +81,7 @@ export const ConcreteModule: React.FC = () => {
           className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg text-xs font-semibold shadow transition-colors flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Nouvel Essai de Compression</span>
+          <span>{t('concrete.addBtn')}</span>
         </button>
       </div>
 
@@ -92,17 +93,17 @@ export const ConcreteModule: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[750px] text-left text-xs">
+          <table className="w-full min-w-[750px] text-start text-xs">
             <thead className="bg-neutral-900 text-neutral-400 uppercase font-mono tracking-wider border-b border-neutral-700">
               <tr>
-                <th className="px-6 py-3">Code Échantillon</th>
-                <th className="px-6 py-3">Chantier / Client</th>
-                <th className="px-6 py-3">Âge (Jours)</th>
-                <th className="px-6 py-3">Force Rupture (kN)</th>
-                <th className="px-6 py-3">Section (cm²)</th>
-                <th className="px-6 py-3 font-bold text-white">Résistance Rc (MPa)</th>
-                <th className="px-6 py-3">Affaissement (mm)</th>
-                <th className="px-6 py-3">Résultat</th>
+                <th className="px-6 py-3 text-start">{t('concrete.tableCode')}</th>
+                <th className="px-6 py-3 text-start">Chantier / Client</th>
+                <th className="px-6 py-3 text-start">Âge (Jours)</th>
+                <th className="px-6 py-3 text-start">Force Rupture (kN)</th>
+                <th className="px-6 py-3 text-start">Section (cm²)</th>
+                <th className="px-6 py-3 text-start font-bold text-white">Résistance Rc (MPa)</th>
+                <th className="px-6 py-3 text-start">Affaissement (mm)</th>
+                <th className="px-6 py-3 text-start">{t('concrete.tableConclusion')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-700/60 text-neutral-300 font-mono">
@@ -147,7 +148,7 @@ export const ConcreteModule: React.FC = () => {
             <div className="flex items-center justify-between border-b border-neutral-700 pb-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-[#FF8C00]" />
-                <span>Nouvel Essai de Compression Béton (NA 16002)</span>
+                <span>{t('concrete.modalTitle')}</span>
               </h3>
               <button 
                 onClick={() => setShowModal(false)}
@@ -159,7 +160,7 @@ export const ConcreteModule: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-neutral-400 mb-1">Sélectionner l'Échantillon Béton</label>
+                <label className="block text-neutral-400 mb-1">{t('concrete.sampleCodeLabel')}</label>
                 <select
                   value={selectedSampleId}
                   onChange={(e) => setSelectedSampleId(e.target.value)}
@@ -186,7 +187,7 @@ export const ConcreteModule: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">Affaissement Cône Abrams (mm)</label>
+                  <label className="block text-neutral-400 mb-1">{t('concrete.slumpLabel')}</label>
                   <input
                     type="number"
                     value={slumpMm}
@@ -263,13 +264,13 @@ export const ConcreteModule: React.FC = () => {
                   onClick={() => setShowModal(false)}
                   className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg font-medium"
                 >
-                  Annuler
+                  {t('concrete.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg font-semibold"
                 >
-                  Valider & Générer le PV
+                  {t('concrete.submit')}
                 </button>
               </div>
             </form>

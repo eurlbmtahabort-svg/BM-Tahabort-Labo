@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useLims } from '../context/LimsContext';
 import { Layers, Plus, CheckCircle2, AlertTriangle, Calculator } from 'lucide-react';
 import { ComplianceResult } from '../types/lims';
+import { useTranslation } from 'react-i18next';
 
 export const AsphaltModule: React.FC = () => {
   const { asphaltTests, addAsphaltTest, samples, generatePV } = useLims();
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
 
   const asphaltSamples = samples.filter(s => s.materialType === 'asphalt');
@@ -61,10 +63,10 @@ export const AsphaltModule: React.FC = () => {
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <Layers className="w-6 h-6 text-[#FF8000]" />
-            <span>Enrobés Bitumineux & Essai Marshall</span>
+            <span>{t('asphalt.title')}</span>
           </h2>
           <p className="text-xs text-neutral-400 mt-1">
-            Contrôle de la stabilité, du fluage, de la compacité et de la teneur en liant hydrocarboné.
+            {t('asphalt.subtitle')}
           </p>
         </div>
         <button
@@ -72,7 +74,7 @@ export const AsphaltModule: React.FC = () => {
           className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg text-xs font-semibold shadow transition-colors flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Nouvel Essai Marshall</span>
+          <span>{t('asphalt.addBtn')}</span>
         </button>
       </div>
 
@@ -84,17 +86,17 @@ export const AsphaltModule: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[750px] text-left text-xs">
+          <table className="w-full min-w-[750px] text-start text-xs">
             <thead className="bg-neutral-900 text-neutral-400 uppercase font-mono tracking-wider border-b border-neutral-700">
               <tr>
-                <th className="px-6 py-3">Code Échantillon</th>
-                <th className="px-6 py-3">Chantier / Client</th>
-                <th className="px-6 py-3">Teneur Liant (%)</th>
-                <th className="px-6 py-3 font-bold text-white">Stabilité (kN)</th>
-                <th className="px-6 py-3">Fluage (0.1 mm)</th>
-                <th className="px-6 py-3">Vides (%)</th>
-                <th className="px-6 py-3">VMA (%)</th>
-                <th className="px-6 py-3">Résultat</th>
+                <th className="px-6 py-3 text-start">{t('asphalt.tableSample')}</th>
+                <th className="px-6 py-3 text-start">Chantier / Client</th>
+                <th className="px-6 py-3 text-start">Teneur Liant (%)</th>
+                <th className="px-6 py-3 text-start font-bold text-white">{t('asphalt.tableStability')}</th>
+                <th className="px-6 py-3 text-start">{t('asphalt.tableCreep')}</th>
+                <th className="px-6 py-3 text-start">{t('asphalt.tableVoids')}</th>
+                <th className="px-6 py-3 text-start">VMA (%)</th>
+                <th className="px-6 py-3 text-start">{t('asphalt.tableConclusion')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-700/60 text-neutral-300 font-mono">
@@ -139,7 +141,7 @@ export const AsphaltModule: React.FC = () => {
             <div className="flex items-center justify-between border-b border-neutral-700 pb-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-[#FF8C00]" />
-                <span>Nouvel Essai Marshall (NA 5031)</span>
+                <span>{t('asphalt.modalTitle')}</span>
               </h3>
               <button 
                 onClick={() => setShowModal(false)}
@@ -151,7 +153,7 @@ export const AsphaltModule: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-neutral-400 mb-1">Sélectionner l'Échantillon Enrobé</label>
+                <label className="block text-neutral-400 mb-1">{t('concrete.sampleCodeLabel')}</label>
                 <select
                   value={selectedSampleId}
                   onChange={(e) => setSelectedSampleId(e.target.value)}
@@ -165,7 +167,7 @@ export const AsphaltModule: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-neutral-400 mb-1">Teneur en Liant Bitumineux (%)</label>
+                  <label className="block text-neutral-400 mb-1">{t('asphalt.bitumenLabel')}</label>
                   <input
                     type="number"
                     step="0.1"
@@ -176,7 +178,7 @@ export const AsphaltModule: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">Stabilité Marshall (kN)</label>
+                  <label className="block text-neutral-400 mb-1">{t('asphalt.stabilityLabel')}</label>
                   <input
                     type="number"
                     step="0.1"
@@ -190,7 +192,7 @@ export const AsphaltModule: React.FC = () => {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-neutral-400 mb-1">Fluage (0.1 mm)</label>
+                  <label className="block text-neutral-400 mb-1">{t('asphalt.creepLabel')}</label>
                   <input
                     type="number"
                     required
@@ -200,7 +202,7 @@ export const AsphaltModule: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">Vides (%)</label>
+                  <label className="block text-neutral-400 mb-1">{t('asphalt.voidsLabel')}</label>
                   <input
                     type="number"
                     step="0.1"
@@ -252,13 +254,13 @@ export const AsphaltModule: React.FC = () => {
                   onClick={() => setShowModal(false)}
                   className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg font-medium"
                 >
-                  Annuler
+                  {t('samples.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg font-semibold"
                 >
-                  Valider & Générer le PV
+                  {t('concrete.submit')}
                 </button>
               </div>
             </form>

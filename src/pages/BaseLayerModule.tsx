@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useLims } from '../context/LimsContext';
 import { Mountain, Plus, CheckCircle2, AlertTriangle, Calculator } from 'lucide-react';
 import { ComplianceResult } from '../types/lims';
+import { useTranslation } from 'react-i18next';
 
 export const BaseLayerModule: React.FC = () => {
   const { baseLayerTests, addBaseLayerTest, samples, generatePV } = useLims();
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
 
   const baseLayerSamples = samples.filter(s => s.materialType === 'base_layer');
@@ -61,10 +63,10 @@ export const BaseLayerModule: React.FC = () => {
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <Mountain className="w-6 h-6 text-[#FF8C00]" />
-            <span>Couches de Base & Géotechnique Routière</span>
+            <span>{t('baseLayer.title')}</span>
           </h2>
           <p className="text-xs text-neutral-400 mt-1">
-            Essais Proctor Modifié, CBR, Équivalent de Sable et Résistance à la Fragmentation (Los Angeles).
+            {t('baseLayer.subtitle')}
           </p>
         </div>
         <button
@@ -72,7 +74,7 @@ export const BaseLayerModule: React.FC = () => {
           className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg text-xs font-semibold shadow transition-colors flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Nouvel Essai Géotechnique</span>
+          <span>{t('baseLayer.addBtn')}</span>
         </button>
       </div>
 
@@ -84,17 +86,17 @@ export const BaseLayerModule: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[750px] text-left text-xs">
+          <table className="w-full min-w-[750px] text-start text-xs">
             <thead className="bg-neutral-900 text-neutral-400 uppercase font-mono tracking-wider border-b border-neutral-700">
               <tr>
-                <th className="px-6 py-3">Code Échantillon</th>
-                <th className="px-6 py-3">Chantier / Client</th>
-                <th className="px-6 py-3">Densité Sèche Max (t/m³)</th>
-                <th className="px-6 py-3">Teneur en Eau Opm (%)</th>
-                <th className="px-6 py-3 font-bold text-white">CBR @ 95%</th>
-                <th className="px-6 py-3">Équivalent Sable (%)</th>
-                <th className="px-6 py-3">Los Angeles (%)</th>
-                <th className="px-6 py-3">Résultat</th>
+                <th className="px-6 py-3 text-start">{t('baseLayer.tableSample')}</th>
+                <th className="px-6 py-3 text-start">Chantier / Client</th>
+                <th className="px-6 py-3 text-start">{t('baseLayer.tableProctor')}</th>
+                <th className="px-6 py-3 text-start">Teneur en Eau Opm (%)</th>
+                <th className="px-6 py-3 text-start font-bold text-white">{t('baseLayer.tableCbr')}</th>
+                <th className="px-6 py-3 text-start">{t('baseLayer.tableSand')}</th>
+                <th className="px-6 py-3 text-start">Los Angeles (%)</th>
+                <th className="px-6 py-3 text-start">{t('baseLayer.tableConclusion')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-700/60 text-neutral-300 font-mono">
@@ -139,7 +141,7 @@ export const BaseLayerModule: React.FC = () => {
             <div className="flex items-center justify-between border-b border-neutral-700 pb-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-[#FF8C00]" />
-                <span>Nouvel Essai Géotechnique (Proctor & CBR)</span>
+                <span>{t('baseLayer.modalTitle')}</span>
               </h3>
               <button 
                 onClick={() => setShowModal(false)}
@@ -151,7 +153,7 @@ export const BaseLayerModule: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-neutral-400 mb-1">Sélectionner l'Échantillon Grave GNT</label>
+                <label className="block text-neutral-400 mb-1">{t('concrete.sampleCodeLabel')}</label>
                 <select
                   value={selectedSampleId}
                   onChange={(e) => setSelectedSampleId(e.target.value)}
@@ -165,7 +167,7 @@ export const BaseLayerModule: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-neutral-400 mb-1">Densité Sèche Maximale (t/m³)</label>
+                  <label className="block text-neutral-400 mb-1">{t('baseLayer.proctorLabel')}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -176,7 +178,7 @@ export const BaseLayerModule: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">Teneur en Eau Optimum (%)</label>
+                  <label className="block text-neutral-400 mb-1">{t('baseLayer.optimumLabel')}</label>
                   <input
                     type="number"
                     step="0.1"
@@ -190,7 +192,7 @@ export const BaseLayerModule: React.FC = () => {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-neutral-400 mb-1">Indice CBR @ 95% OMD</label>
+                  <label className="block text-neutral-400 mb-1">{t('baseLayer.cbrLabel')}</label>
                   <input
                     type="number"
                     step="0.5"
@@ -201,7 +203,7 @@ export const BaseLayerModule: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">Équivalent de Sable ES (%)</label>
+                  <label className="block text-neutral-400 mb-1">{t('baseLayer.sandEqLabel')}</label>
                   <input
                     type="number"
                     step="0.5"
@@ -253,13 +255,13 @@ export const BaseLayerModule: React.FC = () => {
                   onClick={() => setShowModal(false)}
                   className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg font-medium"
                 >
-                  Annuler
+                  {t('samples.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-[#FF8C00] hover:bg-[#e07b00] text-white rounded-lg font-semibold"
                 >
-                  Valider & Générer le PV
+                  {t('concrete.submit')}
                 </button>
               </div>
             </form>
