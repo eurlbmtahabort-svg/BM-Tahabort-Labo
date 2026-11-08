@@ -17,30 +17,62 @@ export interface Sample {
   samplingLocation: string;
 }
 
+export interface MixComponent {
+  material: string;
+  provenance: string;
+  dosageKg: number;
+  dosageLitres: number;
+}
+
+export interface CylinderResult {
+  castingDate: string;
+  testDate: string;
+  ageDays: number;
+  weightKg: number;
+  crushingForceKN: number;
+  resistanceMPa: number;
+  resistanceBar: number;
+}
+
 export interface ConcreteTest {
   id: string;
   sampleId: string;
   sampleCode: string;
   clientName: string;
   projectName: string;
-  contractNumber?: string; // N° de marché
-  castingDate?: string; // Date de coulage
-  curingConditions?: string; // Conditions de cure
-  machineName?: string; // Machine d'essai (Presse)
-  calibrationCertNo?: string; // N° certificat calibrage
-  calibrationExpiry?: string; // Date validité calibrage
-  ageDays: number; // e.g. 7 or 28
-  dimensionA: number; // mm (e.g. 150)
-  dimensionB: number; // mm (e.g. 150)
-  weightKg: number;
-  crushingForceKN: number; // kN
-  sectionalAreaCm2: number; // cm²
-  calculatedRcMPa: number; // MPa
-  slumpMm: number; // mm (Abrams cone)
+  refNumber: string; // e.g. "B.AK/P01/006-07/2026"
+  reportNumber: string; // e.g. "006-07"
+  norm: string; // e.g. "NA 17004 / NA 16002"
+  preparedBy: string; // e.g. "Laboratoire"
+  requestedBy: string; // e.g. "ETB/TCE BERADI ABDELKADAR"
+  placementMode: string; // e.g. "BÉTONNIÈRE"
+  concreteDesignation: string; // e.g. "PLANCHER RDC + ESCALIER 2ÈME VOLÉE"
+  
+  mixComposition: MixComponent[];
+  
+  specimenShape: string; // e.g. "cylindrique 16 x 32 cm"
+  curingCondition: string; // e.g. "Bassin d’eau"
+  rectificationMode: string; // e.g. "Surfaçage au soufre"
+  abramsSlumpCm: number; // e.g. 8
+  temperature: string; // e.g. "20° C +- 2"
+  pressClass: string; // e.g. "A"
+  sectionalAreaCm2: number; // e.g. 201.06
+  
+  cylinders: CylinderResult[]; // 3 cylinders
+  averageMPa: number;
+  averageBar: number;
+  calculatedRcMPa: number; // for backward compatibility
+  ageDays: number;
+  dimensionA?: number;
+  dimensionB?: number;
+  weightKg?: number;
+  crushingForceKN?: number;
+  slumpMm?: number;
+  
   result: ComplianceResult;
-  testDate: string; // Date d'écrasement
+  testDate: string;
   technician: string;
-  standard: string; // e.g. "NA 16002 / EN 12390-3"
+  standard: string;
   notes: string;
 }
 

@@ -102,25 +102,42 @@ export const apiService = {
         sampleCode: t.sample_code || t.sampleCode,
         clientName: t.client_name || t.clientName,
         projectName: t.project_name || t.projectName,
-        ageDays: t.age_days || t.ageDays,
-        dimensionA: t.dimension_a || t.dimensionA,
-        dimensionB: t.dimension_b || t.dimensionB,
-        weightKg: t.weight_kg || t.weightKg,
-        crushingForceKN: t.crushing_force_kn || t.crushingForceKN,
-        sectionalAreaCm2: t.sectional_area_cm2 || t.sectionalAreaCm2,
-        calculatedRcMPa: t.calculated_rc_mpa || t.calculatedRcMPa,
-        slumpMm: t.slump_mm || t.slumpMm,
-        contractNumber: t.contract_number || t.contractNumber,
-        castingDate: t.casting_date || t.castingDate,
-        curingConditions: t.curing_conditions || t.curingConditions,
-        machineName: t.machine_name || t.machineName,
-        calibrationCertNo: t.calibration_cert_no || t.calibrationCertNo,
-        calibrationExpiry: t.calibration_expiry || t.calibrationExpiry,
-        result: t.result,
-        testDate: t.test_date || t.testDate,
-        technician: t.technician,
-        standard: t.standard,
-        notes: t.notes
+        refNumber: t.ref_number || t.refNumber || 'B.AK/P01/006-07/2026',
+        reportNumber: t.report_number || t.reportNumber || '006-07',
+        norm: t.norm || 'NA 17004 / NA 16002',
+        preparedBy: t.prepared_by || t.preparedBy || 'Laboratoire',
+        requestedBy: t.requested_by || t.requestedBy || t.clientName,
+        placementMode: t.placement_mode || t.placementMode || 'BÉTONNIÈRE',
+        concreteDesignation: t.concrete_designation || t.concreteDesignation || t.projectName,
+        mixComposition: typeof t.mix_composition === 'string' ? JSON.parse(t.mix_composition) : (t.mixComposition || [
+          { material: 'Gravier 15/25', provenance: 'Carrière', dosageKg: 1050, dosageLitres: 0 },
+          { material: 'Gravier 8/15', provenance: 'Carrière', dosageKg: 350, dosageLitres: 0 },
+          { material: 'Sable roulé', provenance: 'Oued', dosageKg: 750, dosageLitres: 0 },
+          { material: 'Ciment CPJ', provenance: 'Lafarge', dosageKg: 350, dosageLitres: 0 },
+          { material: 'Eau de gâchage', provenance: 'Forage', dosageKg: 175, dosageLitres: 175 }
+        ]),
+        specimenShape: t.specimen_shape || t.specimenShape || 'cylindrique 16 x 32 cm',
+        curingCondition: t.curing_condition || t.curingCondition || 'Bassin d’eau',
+        rectificationMode: t.rectification_mode || t.rectificationMode || 'Surfaçage au soufre',
+        abramsSlumpCm: t.abrams_slump_cm || t.abramsSlumpCm || 8,
+        temperature: t.temperature || '20° C +- 2',
+        pressClass: t.press_class || t.pressClass || 'A',
+        sectionalAreaCm2: t.sectional_area_cm2 || t.sectionalAreaCm2 || 201.06,
+        cylinders: typeof t.cylinders === 'string' ? JSON.parse(t.cylinders) : (t.cylinders || []),
+        averageMPa: t.average_mpa || t.averageMPa || t.calculated_rc_mpa || 30.0,
+        averageBar: t.average_bar || t.averageBar || (t.calculated_rc_mpa ? t.calculated_rc_mpa * 10 : 300),
+        calculatedRcMPa: t.calculated_rc_mpa || t.calculatedRcMPa || 30.0,
+        ageDays: t.age_days || t.ageDays || 28,
+        dimensionA: t.dimension_a || t.dimensionA || 160,
+        dimensionB: t.dimension_b || t.dimensionB || 320,
+        weightKg: t.weight_kg || t.weightKg || 8.24,
+        crushingForceKN: t.crushing_force_kn || t.crushingForceKN || 600,
+        slumpMm: t.slump_mm || t.slumpMm || 80,
+        result: t.result || 'Conforme',
+        testDate: t.test_date || t.testDate || new Date().toISOString().split('T')[0],
+        technician: t.technician || 'Rachid M.',
+        standard: t.standard || 'NA 17004 / NA 16002',
+        notes: t.notes || ''
       }));
     } catch (e) {
       const saved = localStorage.getItem('lt_lims_concrete');
@@ -129,8 +146,14 @@ export const apiService = {
   },
 
   async addConcreteTest(test: Omit<ConcreteTest, 'id' | 'calculatedRcMPa'>): Promise<ConcreteTest> {
-    const calculatedRcMPa = Number(((test.crushingForceKN * 1000) / (test.sectionalAreaCm2 * 100)).toFixed(2));
-    const newTest: ConcreteTest = { ...test, id: 'ct_' + Date.now(), calculatedRcMPa };
+    const calculatedRcMPa = test.averageMPa || Number(((test.cylinders?.[0]?.crushingForceKN || 600) / test.sectionalAreaCm2 * 10).toFixed(2));
+    const newTest: ConcreteTest = { 
+      ...test, 
+      id: 'ct_' + Date.now(), 
+      calculatedRcMPa,
+      averageMPa: test.averageMPa || calculatedRcMPa,
+      averageBar: test.averageBar || Number((calculatedRcMPa * 10).toFixed(1))
+    };
     try {
       await fetch(`${API_BASE}/tests?type=concrete`, {
         method: 'POST',
@@ -138,6 +161,9 @@ export const apiService = {
         body: JSON.stringify(newTest)
       });
     } catch (e) {}
+    // Also save to localStorage fallback
+    const existing = JSON.parse(localStorage.getItem('lt_lims_concrete') || '[]');
+    localStorage.setItem('lt_lims_concrete', JSON.stringify([newTest, ...existing]));
     return newTest;
   },
 
