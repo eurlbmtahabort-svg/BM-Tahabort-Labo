@@ -23,16 +23,22 @@ export interface ConcreteTest {
   sampleCode: string;
   clientName: string;
   projectName: string;
+  contractNumber?: string; // N° de marché
+  castingDate?: string; // Date de coulage
+  curingConditions?: string; // Conditions de cure
+  machineName?: string; // Machine d'essai (Presse)
+  calibrationCertNo?: string; // N° certificat calibrage
+  calibrationExpiry?: string; // Date validité calibrage
   ageDays: number; // e.g. 7 or 28
   dimensionA: number; // mm (e.g. 150)
   dimensionB: number; // mm (e.g. 150)
   weightKg: number;
   crushingForceKN: number; // kN
   sectionalAreaCm2: number; // cm²
-  calculatedRcMPa: number; // MPa = (Force * 1000) / (Area * 100) -> Force / Area (since 1 kN = 1000 N, Area in cm² = 100 mm², so Rc = Force / Area)
+  calculatedRcMPa: number; // MPa
   slumpMm: number; // mm (Abrams cone)
   result: ComplianceResult;
-  testDate: string;
+  testDate: string; // Date d'écrasement
   technician: string;
   standard: string; // e.g. "NA 16002 / EN 12390-3"
   notes: string;

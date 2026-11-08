@@ -19,7 +19,16 @@ export const ConcreteModule: React.FC = () => {
   const [crushingForceKN, setCrushingForceKN] = useState<number>(680);
   const [sectionalAreaCm2, setSectionalAreaCm2] = useState<number>(225);
   const [slumpMm, setSlumpMm] = useState<number>(80);
-  const [notes, setNotes] = useState<string>('Éprouvettes cylindriques 16x32 ou cubiques 15x15. Conforme NA 16002.');
+  
+  // CTC compliance fields
+  const [contractNumber, setContractNumber] = useState<string>('MARCHÉ N° 124/2026');
+  const [castingDate, setCastingDate] = useState<string>(new Date(Date.now() - 28 * 86400000).toISOString().split('T')[0]);
+  const [curingConditions, setCuringConditions] = useState<string>('Bassin thermorégulé 20°C');
+  const [machineName, setMachineName] = useState<string>('Presse Hydraulique 3000kN ToniTechnik');
+  const [calibrationCertNo, setCalibrationCertNo] = useState<string>('CAL-2025-891');
+  const [calibrationExpiry, setCalibrationExpiry] = useState<string>('2026-12-31');
+
+  const [notes, setNotes] = useState<string>('Éprouvettes cylindriques 16x32 ou cubiques 15x15. Conforme NA 16002 & CTC.');
 
   // Auto-calculated preview
   const calculatedRc = Number(((crushingForceKN * 1000) / (sectionalAreaCm2 * 100)).toFixed(2));
@@ -37,6 +46,12 @@ export const ConcreteModule: React.FC = () => {
       sampleCode: sample.code,
       clientName: sample.clientName,
       projectName: sample.projectName,
+      contractNumber,
+      castingDate,
+      curingConditions,
+      machineName,
+      calibrationCertNo,
+      calibrationExpiry,
       ageDays,
       dimensionA,
       dimensionB,
@@ -51,11 +66,15 @@ export const ConcreteModule: React.FC = () => {
       notes
     });
 
-    await generatePV(
-      sample.id,
-      `Écrasement éprouvette béton à ${ageDays} jours. Force de rupture = ${crushingForceKN} kN, Surface = ${sectionalAreaCm2} cm², Résistance Rc = ${newTest.calculatedRcMPa} MPa. Résultat: ${result}.`,
+    const summaryText = t('reports.concreteSummary', {
+      age: ageDays,
+      force: crushingForceKN,
+      area: sectionalAreaCm2,
+      rc: newTest.calculatedRcMPa,
       result
-    );
+    });
+
+    await generatePV(sample.id, summaryText, result);
 
     setShowModal(false);
   };
@@ -66,7 +85,7 @@ export const ConcreteModule: React.FC = () => {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-[#FF8C00] text-xs font-semibold uppercase tracking-wider mb-1">
-            <span>Normes Algériennes NA 16002 & Européennes EN 12390-3</span>
+            <span>Normes Algériennes NA 16002 & Européennes EN 12390-3 (Contrôle CTC)</span>
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <Box className="w-6 h-6 text-[#FF8C00]" />
@@ -143,8 +162,8 @@ export const ConcreteModule: React.FC = () => {
 
       {/* New Concrete Test Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-neutral-800 border border-neutral-700 rounded-xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-neutral-800 border border-neutral-700 rounded-xl max-w-2xl w-full p-6 shadow-2xl space-y-4 my-8">
             <div className="flex items-center justify-between border-b border-neutral-700 pb-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-[#FF8C00]" />
@@ -172,6 +191,30 @@ export const ConcreteModule: React.FC = () => {
                 </select>
               </div>
 
+              {/* Project / Contract Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-neutral-400 mb-1">{t('concrete.contractLabel')}</label>
+                  <input
+                    type="text"
+                    required
+                    value={contractNumber}
+                    onChange={(e) => setContractNumber(e.target.value)}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-neutral-400 mb-1">{t('concrete.castingDateLabel')}</label>
+                  <input
+                    type="date"
+                    required
+                    value={castingDate}
+                    onChange={(e) => setCastingDate(e.target.value)}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
+                  />
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-neutral-400 mb-1">Âge de l'éprouvette (Jours)</label>
@@ -187,16 +230,55 @@ export const ConcreteModule: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">{t('concrete.slumpLabel')}</label>
+                  <label className="block text-neutral-400 mb-1">{t('concrete.curingLabel')}</label>
                   <input
-                    type="number"
-                    value={slumpMm}
-                    onChange={(e) => setSlumpMm(Number(e.target.value))}
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
+                    type="text"
+                    required
+                    value={curingConditions}
+                    onChange={(e) => setCuringConditions(e.target.value)}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
               </div>
 
+              {/* Equipment Calibration (CTC) */}
+              <div className="p-3 bg-neutral-900/60 rounded-lg border border-neutral-700 space-y-3">
+                <p className="font-bold text-neutral-300 text-[11px] uppercase tracking-wide">Équipement & Calibrage (CTC)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-neutral-400 mb-1">{t('concrete.machineLabel')}</label>
+                    <input
+                      type="text"
+                      required
+                      value={machineName}
+                      onChange={(e) => setMachineName(e.target.value)}
+                      className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-neutral-400 mb-1">{t('concrete.calCertLabel')}</label>
+                    <input
+                      type="text"
+                      required
+                      value={calibrationCertNo}
+                      onChange={(e) => setCalibrationCertNo(e.target.value)}
+                      className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-neutral-400 mb-1">{t('concrete.calExpiryLabel')}</label>
+                    <input
+                      type="date"
+                      required
+                      value={calibrationExpiry}
+                      onChange={(e) => setCalibrationExpiry(e.target.value)}
+                      className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Test Measurements */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-neutral-400 mb-1">Force de Rupture F (kN)</label>
@@ -218,15 +300,13 @@ export const ConcreteModule: React.FC = () => {
                     onChange={(e) => setSectionalAreaCm2(Number(e.target.value))}
                     className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
-                  <span className="text-[10px] text-neutral-500 mt-0.5 block">ex: 225 cm² (15x15)</span>
                 </div>
                 <div>
-                  <label className="block text-neutral-400 mb-1">Masse (kg)</label>
+                  <label className="block text-neutral-400 mb-1">Affaissement (mm)</label>
                   <input
                     type="number"
-                    step="0.010"
-                    value={weightKg}
-                    onChange={(e) => setWeightKg(Number(e.target.value))}
+                    value={slumpMm}
+                    onChange={(e) => setSlumpMm(Number(e.target.value))}
                     className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
                 </div>
@@ -235,8 +315,8 @@ export const ConcreteModule: React.FC = () => {
               {/* Live Calculation Preview Box */}
               <div className="p-4 bg-neutral-900 border border-neutral-700 rounded-lg space-y-2">
                 <div className="flex items-center justify-between text-neutral-400">
-                  <span>Calcul Automatique de Résistance Rc (MPa):</span>
-                  <span className="text-[10px] font-mono">Rc = (F × 1000) / (S × 100)</span>
+                  <span>Formule: Charge (kN) / Section (cm²) = Rc (MPa)</span>
+                  <span className="text-[10px] font-mono">{crushingForceKN} / {sectionalAreaCm2}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-mono font-bold text-[#FF8C00]">{calculatedRc} MPa</span>
@@ -249,7 +329,7 @@ export const ConcreteModule: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-neutral-400 mb-1">Observations & Remarques Laboratoire</label>
+                <label className="block text-neutral-400 mb-1">Observations & Remarques</label>
                 <textarea
                   rows={2}
                   value={notes}

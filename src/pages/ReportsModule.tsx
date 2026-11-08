@@ -5,7 +5,7 @@ import { ReportPV } from '../types/lims';
 import { useTranslation } from 'react-i18next';
 
 export const ReportsModule: React.FC = () => {
-  const { reports } = useLims();
+  const { reports, concreteTests, asphaltTests, baseLayerTests } = useLims();
   const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedReport, setSelectedReport] = useState<ReportPV | null>(reports[0] || null);
@@ -22,6 +22,50 @@ export const ReportsModule: React.FC = () => {
   };
 
   const isRtl = i18n.language === 'ar';
+
+  // Find matching test data for CTC details & dynamic translated summary
+  const concreteTest = concreteTests.find(t => t.sampleId === selectedReport?.sampleId || t.sampleCode === selectedReport?.sampleCode);
+  const asphaltTest = asphaltTests.find(t => t.sampleId === selectedReport?.sampleId || t.sampleCode === selectedReport?.sampleCode);
+  const baseTest = baseLayerTests.find(t => t.sampleId === selectedReport?.sampleId || t.sampleCode === selectedReport?.sampleCode);
+
+  // Dynamic translated summary text
+  const getTranslatedSummary = () => {
+    if (!selectedReport) return '';
+    if (selectedReport.materialType === 'concrete' && concreteTest) {
+      return t('reports.concreteSummary', {
+        age: concreteTest.ageDays,
+        force: concreteTest.crushingForceKN,
+        area: concreteTest.sectionalAreaCm2,
+        rc: concreteTest.calculatedRcMPa,
+        result: selectedReport.testResult
+      });
+    }
+    if (selectedReport.materialType === 'asphalt' && asphaltTest) {
+      return t('reports.asphaltSummary', {
+        stability: asphaltTest.stabilityKN,
+        flow: asphaltTest.flow01mm,
+        binder: asphaltTest.binderContentPct,
+        voids: asphaltTest.voidsPct,
+        result: selectedReport.testResult
+      });
+    }
+    if (selectedReport.materialType === 'base_layer' && baseTest) {
+      return t('reports.baseLayerSummary', {
+        density: baseTest.maxDryDensity,
+        moisture: baseTest.optimumMoisturePct,
+        cbr: baseTest.cbr95Pct,
+        la: baseTest.losAngelesPct,
+        result: selectedReport.testResult
+      });
+    }
+    return selectedReport.summaryText;
+  };
+
+  const translatedMaterial = selectedReport?.materialType === 'concrete' 
+    ? t('dashboard.matConcrete') 
+    : selectedReport?.materialType === 'asphalt' 
+    ? t('dashboard.matAsphalt') 
+    : t('dashboard.matBase');
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 px-2 sm:px-0">
@@ -97,7 +141,7 @@ export const ReportsModule: React.FC = () => {
           </div>
         </div>
 
-        {/* PV Official Preview Document */}
+        {/* PV Official Preview Document (CTC Compliant) */}
         <div 
           dir={isRtl ? 'rtl' : 'ltr'} 
           className="lg:col-span-7 bg-white text-neutral-900 rounded-xl p-6 md:p-8 shadow-2xl border border-neutral-300 relative print:shadow-none print:w-full print:p-0"
@@ -132,7 +176,7 @@ export const ReportsModule: React.FC = () => {
                 <p className="text-[10px] sm:text-[11px] text-neutral-600">{t('reports.standardRef')} {selectedReport.standardRef}</p>
               </div>
 
-              {/* Client & Project Info */}
+              {/* Client & Project Info + CTC fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-neutral-50 p-3 sm:p-4 rounded border border-neutral-200 font-mono">
                 <div>
                   <span className="text-neutral-500 block text-[10px] uppercase">{t('reports.clientOwner')}</span>
@@ -148,15 +192,51 @@ export const ReportsModule: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-neutral-500 block text-[10px] uppercase">{t('reports.materialType')}</span>
-                  <span className="font-bold text-neutral-900 capitalize">{selectedReport.materialType}</span>
+                  <span className="font-bold text-neutral-900 capitalize">{translatedMaterial}</span>
                 </div>
+                {concreteTest && (
+                  <>
+                    <div>
+                      <span className="text-neutral-500 block text-[10px] uppercase">{t('reports.contractNo')}</span>
+                      <span className="font-bold text-neutral-900">{concreteTest.contractNumber || 'N/A'}</span>
+                    </div>
+                    <div>
+                      <span className="text-neutral-500 block text-[10px] uppercase">{t('reports.castingDate')}</span>
+                      <span className="font-bold text-neutral-900">{concreteTest.castingDate || 'N/A'}</span>
+                    </div>
+                    <div>
+                      <span className="text-neutral-500 block text-[10px] uppercase">{t('reports.crushingDate')}</span>
+                      <span className="font-bold text-neutral-900">{concreteTest.testDate}</span>
+                    </div>
+                    <div>
+                      <span className="text-neutral-500 block text-[10px] uppercase">{t('reports.curingConditions')}</span>
+                      <span className="font-bold text-neutral-900">{concreteTest.curingConditions || 'N/A'}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Test Results Summary */}
+              {/* Equipment Calibration (CTC) */}
+              {concreteTest && concreteTest.machineName && (
+                <div className="p-3 bg-neutral-100 rounded border border-neutral-300 text-xs space-y-1 font-mono">
+                  <p className="font-bold text-neutral-800 text-[10px] uppercase">{t('reports.machineName')} <span className="font-normal">{concreteTest.machineName}</span></p>
+                  <div className="flex flex-wrap gap-4 text-neutral-600 text-[11px]">
+                    <span>{t('reports.calibrationCert')} <strong className="text-neutral-900">{concreteTest.calibrationCertNo}</strong></span>
+                    <span>{t('reports.calibrationExpiry')} <strong className="text-neutral-900">{concreteTest.calibrationExpiry}</strong></span>
+                  </div>
+                </div>
+              )}
+
+              {/* Formula & Test Results Summary */}
               <div className="space-y-2">
-                <h5 className="text-xs font-bold text-neutral-800 uppercase tracking-wider">{t('reports.resultsAnalysis')}</h5>
+                <div className="flex items-center justify-between">
+                  <h5 className="text-xs font-bold text-neutral-800 uppercase tracking-wider">{t('reports.resultsAnalysis')}</h5>
+                  <span className="text-[10px] font-mono text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded border border-neutral-200">
+                    {t('reports.formula')}
+                  </span>
+                </div>
                 <div className="p-3 sm:p-4 bg-neutral-100 border border-neutral-300 rounded text-xs text-neutral-800 leading-relaxed font-mono">
-                  {selectedReport.summaryText}
+                  {getTranslatedSummary()}
                 </div>
               </div>
 
@@ -176,22 +256,32 @@ export const ReportsModule: React.FC = () => {
                 </span>
               </div>
 
-              {/* Signatures & QR Code */}
-              <div className="pt-4 border-t border-neutral-200 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 text-xs">
+              {/* Signatures, Visa CTC & QR Code */}
+              <div className="pt-4 border-t border-neutral-200 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs items-end">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-neutral-600 font-mono text-[10px]">
                     <QrCode className="w-7 h-7 text-neutral-800 shrink-0" />
                     <div>
                       <p className="font-bold text-neutral-900">{t('reports.verificationToken')}</p>
-                      <p className="text-neutral-500 truncate max-w-[180px] sm:max-w-none">{selectedReport.qrCodeToken}</p>
+                      <p className="text-neutral-500 truncate max-w-[140px]">{selectedReport.qrCodeToken}</p>
                     </div>
                   </div>
                   <p className="text-[9px] text-neutral-400">{t('reports.nonReprod')}</p>
                 </div>
 
-                <div className="text-start sm:text-end space-y-1 w-full sm:w-auto">
+                {/* Visa CTC Box */}
+                <div className="text-center space-y-1 p-2 bg-neutral-50 border border-dashed border-neutral-400 rounded">
+                  <p className="font-bold text-neutral-900 text-[11px]">{t('reports.visaCtc')}</p>
+                  <div className="h-12 flex items-center justify-center">
+                    <span className="text-[10px] text-neutral-400 italic">(Contrôle Technique / Bureau d'Études)</span>
+                  </div>
+                  <p className="text-[9px] text-neutral-500">Cachet & Visa</p>
+                </div>
+
+                {/* Lab Director Signature */}
+                <div className="text-start sm:text-end space-y-1">
                   <p className="font-bold text-neutral-900">{t('reports.directorTitle')}</p>
-                  <div className="h-10 flex items-center sm:justify-end">
+                  <div className="h-12 flex items-center sm:justify-end">
                     <span className="font-serif italic text-xs sm:text-sm text-neutral-700 font-bold border-b border-dashed border-neutral-400 pb-0.5">
                       Dr. M. Tahabort
                     </span>
